@@ -1,0 +1,14 @@
+# /etc/pacman.d/hooks/librewolf-startpage.hook
+# Re-applies the custom startpage config after LibreWolf updates,
+# which would otherwise overwrite /usr/lib/librewolf/ files.
+# Installed automatically by deploy.sh.
+
+[Trigger]
+Operation = Upgrade
+Type = Package
+Target = librewolf
+
+[Action]
+Description = Re-applying custom startpage config after LibreWolf update...
+When = PostTransaction
+Exec = /bin/sh -c 'cp $HOME/.config/startpage-config/autoconfig.js /usr/lib/librewolf/defaults/pref/autoconfig.js && cp $HOME/.config/startpage-config/librewolf.cfg /usr/lib/librewolf/librewolf.cfg'

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>84</title>
+
+  <!-- Favicon: inline SVG — no external request, works on file:// -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231e1e2e'/><text x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-weight='bold' font-size='14' fill='%23cba6f7'>84</text></svg>">
+
+  <!-- Theme & layout variables -->
+  <link rel="stylesheet" href="./config.css">
+
+  <style>
+    /* ── Reset ───────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    /* ── Page ────────────────────────────────────────────────────────────── */
+    body {
+      background-color: var(--base);
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent, transparent 3px,
+          var(--scanline-color) 3px,
+          var(--scanline-color) 4px
+        ),
+        radial-gradient(
+          ellipse 130% 70% at 50% 122%,
+          var(--bg-glow-primary)   0%,
+          var(--bg-glow-secondary) 38%,
+          transparent              64%
+        );
+      color: var(--text);
+      font-family: var(--font-stack);
+      font-size: var(--font-size-base);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding-bottom: 6vh;
+      overflow: hidden;
+    }
+
+    /* Vignette overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(
+        ellipse 90% 90% at 50% 50%,
+        transparent 55%,
+        var(--vignette-color) 100%
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Main container ──────────────────────────────────────────────────── */
+    main {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.2rem;
+      width: min(var(--container-max-width), 100% - 3rem);
+      animation: page-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes page-in {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Weather (shown only when CONFIG.showWeather = true) ────────────── */
+    #weather {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      color: var(--overlay1);
+      letter-spacing: 0.06em;
+    }
+    #weather .weather-main {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      color: var(--subtext0);
+      letter-spacing: 0.08em;
+    }
+    #weather .weather-icon {
+      /* Prefer any patched Nerd Font the user has installed */
+      font-family:
+        'GeistMono Nerd Font', 'GeistMono Nerd Font Mono',
+        'Geist Mono NF', 'GeistMonoNFM',
+        'Symbols Nerd Font Mono', 'Symbols Nerd Font',
+        'JetBrainsMono Nerd Font', 'JetBrains Mono NF',
+        'FiraCode Nerd Font', 'Hack Nerd Font',
+        monospace;
+      font-size: 1.1rem;
+      line-height: 1;
+      transition: color 0.3s;
+    }
+    #weather .weather-sub {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── Clock (shown only when CONFIG.showClock = true) ─────────────────── */
+    #clock {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      color: var(--overlay1);
+      letter-spacing: 0.06em;
+    }
+    #clock .time {
+      font-size: 1.4rem;
+      color: var(--subtext0);
+      letter-spacing: 0.12em;
+    }
+    #clock .date {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── Logo ────────────────────────────────────────────────────────────── */
+    #logo {
+      width: var(--logo-width);
+      border-radius: 12px;
+      user-select: none;
+      animation: logo-float 7s ease-in-out infinite;
+      margin-top: 1.5rem;
+    }
+
+    @keyframes logo-float {
+      0%, 100% {
+        transform: translateY(0px);
+        filter: drop-shadow(0 0 28px var(--logo-glow-idle));
+      }
+      50% {
+        transform: translateY(-9px);
+        filter: drop-shadow(0 0 44px var(--logo-glow-peak));
+      }
+    }
+
+    /* ── Search bar ──────────────────────────────────────────────────────── */
+    #search-form { width: 100%; }
+
+    .search-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      color: var(--overlay1);
+      pointer-events: none;
+      transition: color 0.2s;
+    }
+
+    .search-wrapper:focus-within .search-icon { color: var(--blue); }
+
+    #search-input {
+      width: 100%;
+      padding: 0.9rem 1.1rem 0.9rem 2.9rem;
+      background: rgba(49, 50, 68, 0.52);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(88, 91, 112, 0.55);
+      border-radius: var(--border-radius-input);
+      color: var(--text);
+      font-family: var(--font-stack);
+      font-size: var(--font-size-base);
+      letter-spacing: 0.03em;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    #search-input::placeholder { color: var(--overlay1); }
+
+    #search-input:focus {
+      border-color: var(--blue);
+      box-shadow:
+        0 0 0 3px rgba(137, 180, 250, 0.16),
+        inset 0 1px 0 rgba(137, 180, 250, 0.06);
+    }
+
+    /* ── Quick-link tiles ────────────────────────────────────────────────── */
+    #tiles {
+      display: flex;
+      gap: var(--card-gap);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.52rem;
+      width:  var(--card-width);
+      height: var(--card-height);
+      background: rgba(49, 50, 68, 0.45);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(88, 91, 112, 0.5);
+      border-radius: var(--border-radius-card);
+      text-decoration: none;
+      color: var(--subtext0);
+      font-size: var(--font-size-label);
+      letter-spacing: var(--letter-spacing-label);
+      text-transform: uppercase;
+      transition:
+        background    0.22s,
+        border-color  0.22s,
+        color         0.22s,
+        box-shadow    0.22s,
+        transform     0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      /* accent set per-tile via inline style: --accent */
+      opacity: 0;
+      animation: tile-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .tile:hover {
+      background: rgba(69, 71, 90, 0.65);
+      transform: translateY(-5px) scale(1.03);
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 8px 30px color-mix(in srgb, var(--accent) 24%, transparent);
+    }
+
+    @keyframes tile-in {
+      from { opacity: 0; transform: translateY(10px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0)    scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <!-- Weather (hidden until data loads; CONFIG.showWeather controls this) -->
+    <div id="weather" style="display:none">
+      <div class="weather-main">
+        <span class="weather-icon" id="weather-icon"></span>
+        <span id="weather-temp"></span>
+      </div>
+      <span class="weather-sub" id="weather-sub"></span>
+    </div>
+
+    <!-- Clock (hidden by default; CONFIG.showClock controls visibility) -->
+    <div id="clock" style="display:none">
+      <span class="time" id="clock-time"></span>
+      <span class="date" id="clock-date"></span>
+    </div>
+
+    <!-- Logo -->
+    <img id="logo" alt="Logo" draggable="false">
+
+    <!-- Search bar -->
+    <form id="search-form">
+      <div class="search-wrapper">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          id="search-input"
+          type="text"
+          autofocus
+          autocomplete="off"
+          spellcheck="false"
+          placeholder=""
+        >
+      </div>
+    </form>
+
+    <!-- Quick-link tiles (populated by config.js) -->
+    <nav id="tiles"></nav>
+  </main>
+
+  <!-- Behaviour config — must load before init script -->
+  <script src="./config.js"></script>
+
+  <script>
+    // ── Localisation ──────────────────────────────────────────────────────
+    // UI strings — extend this object to add more languages.
+    // Falls back to English for any key not found in the chosen language.
+    const STRINGS = {
+      en: { search: 'search…'      },
+      de: { search: 'suchen…'      },
+      fr: { search: 'rechercher…'  },
+      es: { search: 'buscar…'      },
+      it: { search: 'cerca…'       },
+      nl: { search: 'zoeken…'      },
+      pt: { search: 'pesquisar…'   },
+      pl: { search: 'szukaj…'      },
+      ja: { search: '検索…'         },
+      zh: { search: '搜索…'         },
+    };
+    const ui = Object.assign({ search: 'search…' }, STRINGS[CONFIG.language] || {});
+
+    // ── Apply CONFIG ───────────────────────────────────────────────────────
+
+    document.title = CONFIG.title;
+    document.getElementById('logo').src = CONFIG.logoSrc;
+    document.getElementById('search-input').placeholder = ui.search;
+
+    // ── Tiles ──────────────────────────────────────────────────────────────
+    const nav = document.getElementById('tiles');
+    CONFIG.tiles.forEach((tile, i) => {
+      const a = document.createElement('a');
+      a.className = 'tile';
+      a.href      = tile.url;
+      a.style.setProperty('--accent', tile.accent);
+      a.style.animationDelay = `${0.15 + i * 0.07}s`;
+      a.innerHTML = `
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+          ${tile.svg}
+        </svg>
+        <span>${tile.name}</span>
+      `;
+      nav.appendChild(a);
+    });
+
+    // ── Search ─────────────────────────────────────────────────────────────
+    document.getElementById('search-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const q = document.getElementById('search-input').value.trim();
+      if (q) window.location.href = CONFIG.searchUrl + encodeURIComponent(q);
+    });
+
+    // ── Focus on keypress ──────────────────────────────────────────────────
+    if (CONFIG.focusOnKeypress) {
+      document.addEventListener('keydown', e => {
+        const input = document.getElementById('search-input');
+        if (document.activeElement === input) return;
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        if (e.key.length === 1) {           // printable character
+          input.focus();
+          // don't preventDefault — let the keypress land in the input
+        }
+      });
+    }
+
+    // ── Weather ────────────────────────────────────────────────────────────
+    if (CONFIG.showWeather && CONFIG.weatherApiKey) {
+      const WX_CACHE_KEY = 'wx_cache';
+      const WX_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
+      function wxIconData(id, owIcon, tempC) {
+        const ic = CONFIG.weatherIcons;
+        const co = CONFIG.weatherColors;
+        const night = owIcon && owIcon.endsWith('n');
+        if (id >= 200 && id < 300) return { char: ic.thunderstorm,      color: co.thunderstorm };
+        if (id >= 300 && id < 400) return { char: ic.drizzle,           color: co.drizzle };
+        if (id >= 500 && id < 600) return { char: ic.rain,              color: co.rain };
+        if (id >= 600 && id < 700) return { char: ic.snow,              color: co.snow };
+        if (id >= 700 && id < 800) return { char: ic.atmosphere,        color: co.atmosphere };
+        if (id === 800) {
+          if (night) return { char: ic.clearNight, color: co.clearNight };
+          const color = tempC >= CONFIG.weatherTempHot  ? co.clearDayHot
+                      : tempC >= CONFIG.weatherTempWarm ? co.clearDayWarm
+                      : co.clearDay;
+          return { char: ic.clearDay, color };
+        }
+        if (id === 801 || id === 802) {
+          return { char: night ? ic.partlyCloudyNight : ic.partlyCloudyDay, color: co.cloudy };
+        }
+        return { char: ic.cloudy, color: co.cloudy };
+      }
+
+      function renderWeather(data) {
+        const sym   = CONFIG.weatherUnits === 'imperial' ? '°F' : '°C';
+        const temp  = Math.round(data.main.temp);
+        // always convert to °C for threshold comparison
+        const tempC = CONFIG.weatherUnits === 'imperial'
+          ? (data.main.temp - 32) * 5 / 9
+          : data.main.temp;
+        const { char, color } = wxIconData(data.weather[0].id, data.weather[0].icon, tempC);
+        const iconEl = document.getElementById('weather-icon');
+        iconEl.textContent  = char;
+        iconEl.style.color  = color;
+        document.getElementById('weather-temp').textContent = `${temp}${sym}`;
+        document.getElementById('weather-sub').textContent  = `${data.weather[0].description}  ·  ${data.name}`;
+        document.getElementById('weather').style.display    = 'flex';
+      }
+
+      async function fetchWeather(lat, lon, city) {
+        const base   = 'https://api.openweathermap.org/data/2.5/weather';
+        const common = `&appid=${CONFIG.weatherApiKey}&units=${CONFIG.weatherUnits}&lang=${CONFIG.language}`;
+        const url    = lat !== null
+          ? `${base}?lat=${lat}&lon=${lon}${common}`
+          : `${base}?q=${encodeURIComponent(city)}${common}`;
+        try {
+          const res  = await fetch(url);
+          if (!res.ok) return;
+          const data = await res.json();
+          sessionStorage.setItem(WX_CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+          renderWeather(data);
+        } catch { /* network unavailable — fail silently */ }
+      }
+
+      // Try cached data first, then fetch fresh.
+      (function loadWeather() {
+        try {
+          const raw = sessionStorage.getItem(WX_CACHE_KEY);
+          if (raw) {
+            const { ts, data } = JSON.parse(raw);
+            if (Date.now() - ts < WX_CACHE_TTL) { renderWeather(data); return; }
+          }
+        } catch {}
+
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            pos => fetchWeather(pos.coords.latitude, pos.coords.longitude, null),
+            ()  => { if (CONFIG.weatherCity) fetchWeather(null, null, CONFIG.weatherCity); }
+          );
+        } else if (CONFIG.weatherCity) {
+          fetchWeather(null, null, CONFIG.weatherCity);
+        }
+      })();
+    }
+
+    // ── Clock ──────────────────────────────────────────────────────────────
+    if (CONFIG.showClock) {
+      const clockEl = document.getElementById('clock');
+      const timeEl  = document.getElementById('clock-time');
+      const dateEl  = document.getElementById('clock-date');
+      clockEl.style.display = 'flex';
+
+      // Intl formatters — locale + hour12 flag come from config.
+      const timeFmt = new Intl.DateTimeFormat(CONFIG.language, {
+        hour:   '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: !CONFIG.clockFormat24h,
+      });
+      const dateFmt = new Intl.DateTimeFormat(CONFIG.language, {
+        weekday: 'long',
+        day:     'numeric',
+        month:   'long',
+        year:    'numeric',
+      });
+
+      function tick() {
+        const now = new Date();
+        timeEl.textContent = timeFmt.format(now);
+        dateEl.textContent = dateFmt.format(now);
+      }
+      tick();
+      setInterval(tick, 1000);
+    }
+  </script>
+</body>
+</html>

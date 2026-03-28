@@ -1,0 +1,154 @@
+/*
+ * config.css — Theme & Layout
+ * ═══════════════════════════════════════════════════════════════════════════
+ * This is the ONLY file you need to edit to change the visual appearance.
+ * Swap colour hex values to match any theme (Tokyo Night, Gruvbox, Nord…).
+ * Set any opacity variable to 0 to disable that effect.
+ *
+ * DEFAULT THEME: Catppuccin Mocha  https://catppuccin.com
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+
+:root {
+
+  /* ── Base palette ──────────────────────────────────────────────────────
+     Replace ALL values below to switch themes.                            */
+  --base:      #1e1e2e;   /* page background                               */
+  --mantle:    #181825;
+  --crust:     #11111b;
+  --surface0:  #313244;   /* card / input background                       */
+  --surface1:  #45475a;   /* card hover background                         */
+  --surface2:  #585b70;
+  --overlay0:  #6c7086;   /* muted icons                                   */
+  --overlay1:  #7f849c;   /* placeholder text                              */
+  --subtext0:  #a6adc8;   /* card labels                                   */
+  --text:      #cdd6f4;   /* main text                                     */
+
+  /* ── Accent colours ───────────────────────────────────────────────────
+     Referenced by name in config.js tile definitions.
+     Semantic meaning is documented next to each.                          */
+  --mauve:     #cba6f7;   /* primary / logo glow                           */
+  --blue:      #89b4fa;   /* selected / focused (search ring)              */
+  --green:     #a6e3a1;   /* safe / private / ok                           */
+  --red:       #f38ba8;   /* danger / attention                            */
+  --peach:     #fab387;   /* warm / creative                               */
+  --yellow:    #f9e2af;   /* warning                                       */
+  --pink:      #f5c2e7;
+  --lavender:  #b4befe;
+  --teal:      #94e2d5;
+  --sky:       #89dceb;
+  --sapphire:  #74c7ec;
+  --maroon:    #eba0ac;
+  --flamingo:  #f2cdcd;
+  --rosewater: #f5e0dc;
+
+  /* ── Background effects ───────────────────────────────────────────────
+     The "synthwave sun" is a CSS radial gradient at the bottom of the
+     page, inspired by the wallpaper. Set opacity to 0 to disable.        */
+  --bg-glow-primary:   rgba(203, 166, 247, 0.26);  /* mauve bloom          */
+  --bg-glow-secondary: rgba(245, 194, 231, 0.10);  /* pink fade            */
+
+  /* CRT scanlines — horizontal lines every 4px.
+     Set to transparent to disable.                                        */
+  --scanline-color: rgba(0, 0, 0, 0.045);
+
+  /* Vignette — darkens corners to frame the content.
+     Set to transparent to disable.                                        */
+  --vignette-color: rgba(17, 17, 27, 0.65);
+
+  /* ── Logo glow ────────────────────────────────────────────────────────
+     The drop-shadow that pulses during the float animation.               */
+  --logo-glow-idle: rgba(203, 166, 247, 0.52);
+  --logo-glow-peak: rgba(203, 166, 247, 0.78);
+
+  /* ── Layout ───────────────────────────────────────────────────────────
+     Adjust sizes without touching index.html.                             */
+  --logo-width:           270px;
+  --card-width:           110px;
+  --card-height:          94px;
+  --card-gap:             0.9rem;
+  --border-radius-card:   12px;
+  --border-radius-input:  10px;
+  --container-max-width:  640px;
+
+  /* ── Typography ───────────────────────────────────────────────────────
+     Falls back through common monospace fonts. */
+  --font-stack:          'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  --font-size-base:      1rem;
+  --font-size-label:     0.68rem;
+  --letter-spacing-label: 0.08em;
+
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * ALTERNATIVE THEMES (uncomment ONE block to switch)
+ * ═══════════════════════════════════════════════════════════════════════════
+
+── Tokyo Night ────────────────────────────────────────────────────────────
+:root {
+  --base:      #1a1b26;
+  --mantle:    #16161e;
+  --crust:     #13131a;
+  --surface0:  #1f2335;
+  --surface1:  #24283b;
+  --surface2:  #292e42;
+  --overlay0:  #565f89;
+  --overlay1:  #737aa2;
+  --subtext0:  #a9b1d6;
+  --text:      #c0caf5;
+  --mauve:     #bb9af7;
+  --blue:      #7aa2f7;
+  --green:     #9ece6a;
+  --red:       #f7768e;
+  --peach:     #ff9e64;
+  --yellow:    #e0af68;
+  --pink:      #f7a8d8;
+  --lavender:  #b4befe;
+  --teal:      #2ac3de;
+  --sky:       #7dcfff;
+  --sapphire:  #7dcfff;
+  --maroon:    #db4b4b;
+  --flamingo:  #ff5574;
+  --rosewater: #f7768e;
+  --bg-glow-primary:   rgba(187, 154, 247, 0.22);
+  --bg-glow-secondary: rgba(122, 162, 247, 0.08);
+  --logo-glow-idle: rgba(187, 154, 247, 0.50);
+  --logo-glow-peak: rgba(187, 154, 247, 0.75);
+  --vignette-color: rgba(26, 27, 38, 0.65);
+}
+
+── Gruvbox Dark ────────────────────────────────────────────────────────────
+:root {
+  --base:      #282828;
+  --mantle:    #1d2021;
+  --crust:     #141617;
+  --surface0:  #3c3836;
+  --surface1:  #504945;
+  --surface2:  #665c54;
+  --overlay0:  #7c6f64;
+  --overlay1:  #928374;
+  --subtext0:  #a89984;
+  --text:      #ebdbb2;
+  --mauve:     #d3869b;
+  --blue:      #83a598;
+  --green:     #b8bb26;
+  --red:       #fb4934;
+  --peach:     #fe8019;
+  --yellow:    #fabd2f;
+  --pink:      #d3869b;
+  --lavender:  #83a598;
+  --teal:      #8ec07c;
+  --sky:       #83a598;
+  --sapphire:  #458588;
+  --maroon:    #cc241d;
+  --flamingo:  #d3869b;
+  --rosewater: #ebdbb2;
+  --bg-glow-primary:   rgba(211, 134, 155, 0.20);
+  --bg-glow-secondary: rgba(254, 128, 25,  0.08);
+  --logo-glow-idle: rgba(211, 134, 155, 0.45);
+  --logo-glow-peak: rgba(211, 134, 155, 0.70);
+  --vignette-color: rgba(29, 32, 33, 0.65);
+}
+
+*/
