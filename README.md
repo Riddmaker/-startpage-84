@@ -1,4 +1,4 @@
-# 👾 synth-browser-startpage-newtab
+# 👾 Startpage '84
 
 A zero-latency custom new-tab and home page for **LibreWolf** and **Firefox**.
 Synthwave aesthetic with CRT effects · Catppuccin Mocha theme by default · fully configurable without touching HTML.
