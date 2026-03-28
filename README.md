@@ -54,10 +54,14 @@ cd synth-browser-startpage-newtab
 
 # 4. Deploy
 chmod +x deploy.sh
-./deploy.sh
+./deploy.sh       # Windows: run this from Git Bash launched as Administrator
 
 # 5. Restart your browser
 ```
+
+> **Windows users:** `deploy.sh` must be run from a **Git Bash terminal launched as Administrator**
+> (right-click Git Bash → *Run as administrator*), otherwise it cannot write to `Program Files`
+> and will fail with a permission error. See the [Windows section](#windows) below for details.
 
 `deploy.sh` automatically:
 - Detects your OS (Linux, macOS, Windows)
